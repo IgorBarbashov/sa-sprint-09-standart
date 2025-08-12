@@ -1,0 +1,34 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Диаграмма контейнеров (для решения передачи ставок в кол-центры)
+
+Person(client, "Клиент")
+Person(back_office_staff, "Сотрудник бэк-офиса")
+Person(call_center_staff, "Сотрудник кол-центра")
+Person(partner_call_center_staff, "Сотрудник партнерского кол-центра")
+
+System_Boundary(abs_system, "IT-система банка Standard (АБС)") {
+    Container(abs_app, "Приложение АБС", "Delphi")
+    ContainerDb(abs_db, "База данных АБС", "Oracle")
+    Container(abs_stakes_export, "Экспорт ставок", "Delphi/PL-SQL", "Генерация файлов с актуальными ставками по депозитам")
+    Container(abs_store, "Хранилище файлов", "SFTP-сервер", "Хранение файлов с актуальными ставками для кол-центров")
+
+    Rel(back_office_staff, abs_app, "Обновляет ставки депозитов")
+    Rel_R(abs_app, abs_db, "Чтение/запись данных")
+    Rel(abs_app, abs_stakes_export, "Передает данные ставок")
+    Rel_D(abs_stakes_export, abs_store, "Хранилище файлов со ставками по депозитам")
+}
+
+System_Ext(call_center, "Кол-центр")
+System_Ext(partner_call_center, "Партнерский кол-центр")
+
+Rel(call_center, abs_store, "Импорт файла с актуальными ставками")
+Rel(partner_call_center, abs_store, "Импорт файла с актуальными ставками")
+
+Rel_D(call_center_staff, call_center, "Получение информации по ставкам для консультации")
+Rel_D(partner_call_center_staff, partner_call_center, "Получение информации по ставкам для консультации")
+
+Rel_D(client, call_center_staff, "Запрос консультации по ставкам")
+Rel_D(client, partner_call_center_staff, "Запрос консультации по ставкам")
+@enduml

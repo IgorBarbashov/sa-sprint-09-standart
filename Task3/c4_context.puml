@@ -1,0 +1,26 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Диаграмма контекста IT-системы банка Standard
+
+System_Ext(call_center, "Кол-центр")
+System_Ext(sms_gateway, "SMS-шлюз", "Сервис отправки SMS клиентам")
+
+Person(client, "Клиент", "Клиент")
+Person(front_office_staff, "Сотрудник фронт-офиса", "Сотрудник банка в офисе")
+Person(back_office_staff, "Сотрудник бэк-офиса", "Сотрудник, обрабатывающий заявки")
+Person(call_center_operator, "Оператор кол-центра", "Звонит клиентам для уточнения деталей")
+
+System(it_system, "IT-система банка Standard")
+
+Rel_R(call_center_operator, call_center, "Работа с заявками и клиентами")
+Rel_U(call_center, it_system, "Получение и обновление заявок")
+Rel_U(call_center_operator, client, "Уточнение данных по заявке")
+
+Rel_R(client, it_system, "Просмотр условий и оформление заявки")
+Rel(front_office_staff, it_system, "Идентификация клиента и обработка заявок")
+
+Rel_L(back_office_staff, it_system, "Подтверждение условий")
+Rel_L(it_system, sms_gateway, "Отправка уведомлений клиентам")
+Rel(sms_gateway, client, "Отправка уведомлений клиентам")
+@enduml
