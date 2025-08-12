@@ -1,0 +1,25 @@
+@startuml
+!includeurl https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Диаграмма контекста (для решения передачи ставок в кол-центр)
+top to bottom direction
+
+Person(client, "Клиент")
+Person(back_office_staff, "Сотрудник бэк-офиса")
+Person(call_center_staff, "Сотрудник кол-центра")
+Person(partner_call_center_staff, "Сотрудник партнерского кол-центра")
+
+System(abs, "IT-система банка Standard")
+System_Ext(call_center, "Кол-центр")
+System_Ext(partner_call_center, "Партнерский кол-центр")
+
+Rel(client, call_center_staff, "Запрос консультации по ставкам")
+Rel(client, partner_call_center_staff, "Запрос консультации по ставкам")
+
+Rel(call_center_staff, call_center, "Получение информации по ставкам для консультации")
+Rel(partner_call_center_staff, partner_call_center, "Получение информации по ставкам для консультации")
+
+Rel(call_center, abs, "Импорт файла с актуальными ставками")
+Rel(partner_call_center, abs, "Импорт файла с актуальными ставками")
+Rel_U(back_office_staff, abs, "Обновление ставок депозитов")
+@enduml
