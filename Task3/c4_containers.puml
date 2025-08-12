@@ -1,0 +1,46 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Диаграмма контейнеров IT-системы банка Standard
+
+Person(client, "Клиент", "Клиент")
+Person(front_office_staff, "Сотрудник фронт-офиса")
+Person(back_office_staff, "Сотрудник бэк-офиса")
+Person(call_center_operator, "Оператор кол-центра")
+
+Boundary(it_system, "Банковская ИТ-система") {
+    Container(website, "Сайт", "React.js/PHP")
+
+    Boundary(abs_system, "АБС") {
+        Container(abs, "Приложение АБС", "Delphi")
+        ContainerDb(abs_db, "БД АБС", "Oracle")
+        Rel(abs, abs_db, "Взаимодействие с базой")
+    }
+
+    Boundary(ib_system, "Интернет-банк") {
+        Container(ib_ui, "UI интернет-банка", "ASP.NET MVC 4.5")
+        Container(ib, "Сервис интернет-банка", "C#, .NET")
+        ContainerDb(ib_db, "БД интернет-банка", "MS SQL")
+        Rel(ib_ui, ib, "Вызов API")
+        Rel(ib, ib_db, "Взаимодействие с базой")
+    }
+
+    Rel_L(ib, abs, "Асинхронное взаимодействие")
+}
+
+System_Ext(call_center, "Кол-центр")
+System_Ext(sms_gateway, "SMS-шлюз", "Сервис отправки SMS клиентам")
+
+Rel(client, website, "Просмотр условий и оформление заявки")
+Rel(client, ib_ui, "Просмотр условий и оформление заявки")
+
+Rel(call_center_operator, call_center, "Работа с заявками и клиентами")
+Rel(call_center_operator, client, "Уточнение данных по заявке")
+Rel_D(call_center, abs, "Получение и обновление заявок")
+
+Rel_L(front_office_staff, abs, "Идентификация клиента и обработка заявок")
+Rel_U(back_office_staff, abs, "Подтверждение условий")
+
+Rel_R(abs, sms_gateway, "Отправка уведомлений клиентам")
+Rel_R(sms_gateway, client, "Отправка уведомлений клиентам")
+@enduml
